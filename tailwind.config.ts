@@ -52,6 +52,12 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+        furniture: {
+          brown: '#8B5A2B',
+          tan: '#D2B48C',
+          offwhite: '#F5F5F5',
+          gray: '#4A4A4A',
+        },
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
