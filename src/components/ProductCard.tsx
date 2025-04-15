@@ -3,12 +3,23 @@ import { Link } from "react-router-dom";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Eye, ShoppingCart } from "lucide-react";
+import { useCart } from "@/components/CartContext";
+import { toast } from "sonner";
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const cart = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    cart.addToCart(product, 1);
+    toast.success(`${product.name} added to your cart`);
+  };
+
   return (
     <div className="group flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition-all hover:shadow-md">
       <Link to={`/products/${product.id}`} className="aspect-square overflow-hidden">
@@ -45,6 +56,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
               variant="outline"
               size="icon"
               className="h-8 w-8 border-furniture-tan text-furniture-brown hover:bg-furniture-tan/20"
+              onClick={handleAddToCart}
+              disabled={!product.inStock}
             >
               <ShoppingCart className="h-4 w-4" />
               <span className="sr-only">Add to cart</span>

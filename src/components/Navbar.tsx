@@ -4,9 +4,12 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, Search, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useCart } from "@/components/CartContext";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const cart = useCart();
+  const cartItemCount = cart.getCartItemCount();
 
   // Handle navbar background change on scroll
   if (typeof window !== "undefined") {
@@ -84,9 +87,11 @@ const Navbar = () => {
           <Link to="/cart">
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-furniture-brown text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                0
-              </span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-furniture-brown text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                  {cartItemCount}
+                </span>
+              )}
             </Button>
           </Link>
         </div>

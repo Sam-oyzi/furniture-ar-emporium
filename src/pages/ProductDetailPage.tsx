@@ -5,6 +5,8 @@ import { getProductById } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { MinusIcon, PlusIcon, ShoppingCart } from "lucide-react";
 import ARViewer from "@/components/ARViewer";
+import { useCart } from "@/components/CartContext";
+import { toast } from "sonner";
 
 const ProductDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,6 +14,7 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [showAR, setShowAR] = useState(false);
+  const cart = useCart();
   
   if (!product) {
     return (
@@ -24,6 +27,11 @@ const ProductDetailPage = () => {
       </div>
     );
   }
+
+  const handleAddToCart = () => {
+    cart.addToCart(product, quantity);
+    toast.success(`${product.name} added to your cart`);
+  };
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -138,6 +146,7 @@ const ProductDetailPage = () => {
             <Button
               className="flex-1 bg-furniture-brown hover:bg-furniture-gray text-white py-6"
               disabled={!product.inStock}
+              onClick={handleAddToCart}
             >
               <ShoppingCart className="mr-2 h-5 w-5" />
               Add to Cart
