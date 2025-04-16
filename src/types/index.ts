@@ -2,7 +2,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'living' | 'dining' | 'bedroom';
+  category: 'living' | 'dining' | 'bedroom' | string;
   price: number;
   description: string;
   features: string[];

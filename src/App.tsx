@@ -12,6 +12,7 @@ import CartPage from "./pages/CartPage";
 import RoomPlannerPage from "./pages/RoomPlannerPage";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "./components/CartContext";
+import EditMenu from "./components/EditMenu";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <EditMenu />
         <HashRouter> {/* Using HashRouter for GitHub Pages */}
           <Routes>
             <Route path="/" element={<Layout />}>
