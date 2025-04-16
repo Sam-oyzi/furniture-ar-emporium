@@ -54,6 +54,40 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
     
     toast.success(`Added new product: ${name}`);
   };
+  
+  const handleImageUpload = () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // In a real app, we'd upload this file to a server
+        // For now, we'll just pretend and use a fake URL
+        const fakeUploadedUrl = `https://example.com/images/${file.name}`;
+        setImageUrl(fakeUploadedUrl);
+        toast.success(`Image uploaded: ${file.name}`);
+      }
+    };
+    fileInput.click();
+  };
+  
+  const handleModelUpload = () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.glb,.gltf';
+    fileInput.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // In a real app, we'd upload this file to a server
+        // For now, we'll just pretend and use a fake URL
+        const fakeUploadedUrl = `https://example.com/models/${file.name}`;
+        setModelUrl(fakeUploadedUrl);
+        toast.success(`3D model uploaded: ${file.name}`);
+      }
+    };
+    fileInput.click();
+  };
 
   return (
     <Card>
@@ -117,7 +151,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
                 onChange={(e) => setImageUrl(e.target.value)}
                 className="flex-1"
               />
-              <Button type="button" variant="outline" size="icon" title="Upload Image">
+              <Button type="button" variant="outline" size="icon" title="Upload Image" onClick={handleImageUpload}>
                 <Image className="h-4 w-4" />
               </Button>
             </div>
@@ -133,7 +167,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
                 onChange={(e) => setModelUrl(e.target.value)}
                 className="flex-1"
               />
-              <Button type="button" variant="outline" size="icon" title="Upload 3D Model">
+              <Button type="button" variant="outline" size="icon" title="Upload 3D Model" onClick={handleModelUpload}>
                 <Box className="h-4 w-4" />
               </Button>
             </div>
