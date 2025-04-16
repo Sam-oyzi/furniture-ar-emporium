@@ -1,4 +1,3 @@
-
 import { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import { RoomFurnitureItem } from "@/pages/RoomPlannerPage";
@@ -102,14 +101,9 @@ const RoomCanvas = ({
       </div>
       
       <div 
-        ref={(node) => {
-          drop(node);
-          if (containerRef) {
-            containerRef.current = node;
-          }
-        }}
-        className={`relative bg-gray-100 border-2 ${
-          isActive ? "border-furniture-brown" : "border-gray-200"
+        ref={drop}
+        className={`relative bg-gray-100 border-2 transition-colors duration-200 ${
+          isActive ? "border-furniture-brown bg-furniture-tan/10" : isOver ? "border-furniture-brown" : "border-gray-200"
         } rounded-lg overflow-hidden`}
         style={{ 
           width: `${ROOM_WIDTH}px`, 
@@ -121,14 +115,11 @@ const RoomCanvas = ({
         }}
         onClick={handleBackgroundClick}
       >
-        {/* Room grid for perspective */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:20px_20px]"></div>
         
-        {/* Shadow/walls for depth perception */}
         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-200 to-transparent"></div>
         <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-200 to-transparent"></div>
         
-        {/* Place furniture items */}
         {items.map((item) => (
           <FurnitureObject
             key={item.id}
@@ -140,13 +131,17 @@ const RoomCanvas = ({
           />
         ))}
         
-        {/* Drop indicator */}
+        {isOver && !items.length && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="text-furniture-brown text-lg font-medium">Drop furniture here</p>
+          </div>
+        )}
+        
         {isActive && (
-          <div className="absolute inset-0 border-2 border-dashed border-furniture-brown bg-furniture-tan/10 pointer-events-none"></div>
+          <div className="absolute inset-0 border-2 border-dashed border-furniture-brown bg-furniture-tan/10 pointer-events-none" />
         )}
       </div>
       
-      {/* Scale indicator */}
       <div className="text-center mt-2 text-sm text-gray-500">
         Scale: {Math.round(scale * 100)}%
       </div>

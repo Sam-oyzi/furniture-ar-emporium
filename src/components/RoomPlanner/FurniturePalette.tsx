@@ -1,15 +1,8 @@
-
 import { useState } from "react";
 import { useDrag } from "react-dnd";
 import { getProductsByCategory, products } from "@/data/products";
 import { Button } from "@/components/ui/button";
-
-interface DragItem {
-  type: string;
-  productId: string;
-  name: string;
-  image: string;
-}
+import { GripHorizontal } from "lucide-react";
 
 interface FurnitureItemProps {
   productId: string;
@@ -21,7 +14,7 @@ interface FurnitureItemProps {
 const FurnitureItem = ({ productId, name, image, onAddFurniture }: FurnitureItemProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "furniture",
-    item: { type: "furniture", productId, name, image } as DragItem,
+    item: { type: "furniture", productId, name, image },
     end: (item, monitor) => {
       const dropResult = monitor.getDropResult();
       if (item && dropResult) {
@@ -36,7 +29,7 @@ const FurnitureItem = ({ productId, name, image, onAddFurniture }: FurnitureItem
   return (
     <div
       ref={drag}
-      className={`relative cursor-move bg-white border rounded-md overflow-hidden ${
+      className={`relative cursor-move bg-white border rounded-md overflow-hidden group ${
         isDragging ? "opacity-50" : "opacity-100"
       }`}
     >
@@ -47,12 +40,14 @@ const FurnitureItem = ({ productId, name, image, onAddFurniture }: FurnitureItem
           className="h-full w-full object-cover object-center"
         />
       </div>
-      <div className="p-2 text-sm truncate" title={name}>
-        {name}
+      <div className="p-2 flex items-center justify-between">
+        <span className="text-sm truncate" title={name}>{name}</span>
+        <GripHorizontal className="h-4 w-4 text-gray-400 group-hover:text-furniture-brown transition-colors" />
       </div>
       <button 
-        className="absolute top-0 right-0 bg-furniture-brown text-white p-1 m-1 rounded-full"
+        className="absolute top-0 right-0 bg-furniture-brown text-white p-1 m-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={() => onAddFurniture(productId, name, image)}
+        title="Click to add or drag to position"
       >
         +
       </button>
