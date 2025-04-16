@@ -3,12 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
+import RoomPlannerPage from "./pages/RoomPlannerPage";
 import NotFound from "./pages/NotFound";
 import { CartProvider } from "./components/CartContext";
 
@@ -20,13 +21,14 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <HashRouter> {/* Changed from BrowserRouter to HashRouter for GitHub Pages */}
+        <HashRouter> {/* Using HashRouter for GitHub Pages */}
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<HomePage />} />
               <Route path="products" element={<ProductsPage />} />
               <Route path="products/:id" element={<ProductDetailPage />} />
               <Route path="cart" element={<CartPage />} />
+              <Route path="room-planner" element={<RoomPlannerPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

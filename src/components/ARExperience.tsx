@@ -51,14 +51,26 @@ const ARExperience = () => {
               </li>
             </ul>
             
-            <Button
-              asChild
-              className="bg-furniture-brown hover:bg-furniture-gray text-white w-fit mt-4 group"
-            >
-              <Link to="/products">
-                Try AR Now <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                asChild
+                className="bg-furniture-brown hover:bg-furniture-gray text-white w-fit group"
+              >
+                <Link to="/products">
+                  Try AR Now <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              
+              <Button
+                asChild
+                variant="outline"
+                className="border-furniture-brown text-furniture-brown hover:bg-furniture-tan/20 w-fit group"
+              >
+                <Link to="/room-planner">
+                  Design Your Room <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
