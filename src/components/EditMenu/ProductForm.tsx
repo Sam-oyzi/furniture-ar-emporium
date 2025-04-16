@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Image, Cube, Upload, Save } from "lucide-react";
+import { Image, Box, Upload, Save } from "lucide-react";
 import { Product } from "@/types";
 
 interface ProductFormProps {
@@ -134,7 +134,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
                 className="flex-1"
               />
               <Button type="button" variant="outline" size="icon" title="Upload 3D Model">
-                <Cube className="h-4 w-4" />
+                <Box className="h-4 w-4" />
               </Button>
             </div>
           </div>
