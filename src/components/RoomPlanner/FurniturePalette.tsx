@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { useDrag } from "react-dnd";
 import { getProductsByCategory, products } from "@/data/products";
 import { Button } from "@/components/ui/button";
-import { GripHorizontal } from "lucide-react";
+import { GripHorizontal, MoveIcon } from "lucide-react";
 
 interface FurnitureItemProps {
   productId: string;
@@ -29,23 +30,30 @@ const FurnitureItem = ({ productId, name, image, onAddFurniture }: FurnitureItem
   return (
     <div
       ref={drag}
-      className={`relative cursor-move bg-white border rounded-md overflow-hidden group ${
-        isDragging ? "opacity-50" : "opacity-100"
-      }`}
+      className={`relative cursor-move bg-white border rounded-md overflow-hidden group 
+        ${isDragging ? "opacity-50 scale-105 shadow-lg" : "opacity-100"}
+        hover:shadow-md transition-all duration-200`}
     >
-      <div className="aspect-square w-full">
+      <div className="absolute top-0 left-0 right-0 bg-furniture-brown/80 text-white text-xs py-1 px-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <GripHorizontal className="h-3 w-3 mr-1" /> Drag to room
+      </div>
+      
+      <div className="aspect-square w-full mt-2">
         <img
           src={image}
           alt={name}
           className="h-full w-full object-cover object-center"
         />
       </div>
+      
       <div className="p-2 flex items-center justify-between">
         <span className="text-sm truncate" title={name}>{name}</span>
         <GripHorizontal className="h-4 w-4 text-gray-400 group-hover:text-furniture-brown transition-colors" />
       </div>
+      
       <button 
-        className="absolute top-0 right-0 bg-furniture-brown text-white p-1 m-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute bottom-2 right-2 bg-furniture-brown hover:bg-furniture-gray text-white p-1.5 rounded-full flex items-center justify-center shadow
+                   opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={() => onAddFurniture(productId, name, image)}
         title="Click to add or drag to position"
       >
@@ -76,7 +84,10 @@ const FurniturePalette = ({ onAddFurniture }: FurniturePaletteProps) => {
     <div className="bg-white border rounded-lg shadow-lg">
       <div className="p-4 border-b">
         <h2 className="font-medium text-lg">Furniture Palette</h2>
-        <p className="text-sm text-gray-500">Drag items to your room</p>
+        <p className="text-sm text-gray-500 mb-2">Drag items to your room</p>
+        <div className="bg-furniture-tan/20 border border-furniture-brown/20 rounded p-2 text-xs">
+          <strong>Tip:</strong> Drag an item to position it precisely, or click the + button to add it to the center of the room.
+        </div>
       </div>
       
       <div className="p-4">

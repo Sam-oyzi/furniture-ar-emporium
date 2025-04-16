@@ -1,3 +1,4 @@
+
 import { useRef, useState } from "react";
 import { useDrop } from "react-dnd";
 import { RoomFurnitureItem } from "@/pages/RoomPlannerPage";
@@ -131,19 +132,33 @@ const RoomCanvas = ({
           />
         ))}
         
-        {isOver && !items.length && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-furniture-brown text-lg font-medium">Drop furniture here</p>
+        {isOver && (
+          <div className="absolute inset-0 border-2 border-dashed border-furniture-brown bg-furniture-tan/10 pointer-events-none flex items-center justify-center">
+            <div className="bg-white p-3 rounded-lg shadow-lg">
+              <p className="text-furniture-brown text-lg font-medium">Drop furniture here</p>
+            </div>
           </div>
         )}
         
-        {isActive && (
-          <div className="absolute inset-0 border-2 border-dashed border-furniture-brown bg-furniture-tan/10 pointer-events-none" />
+        {!items.length && !isOver && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+            <p className="text-gray-500 font-medium mb-2">Your room is empty</p>
+            <p className="text-gray-400 text-sm">Drag furniture items from the palette on the right<br/>or click the + button to add them here</p>
+          </div>
         )}
       </div>
       
       <div className="text-center mt-2 text-sm text-gray-500">
         Scale: {Math.round(scale * 100)}%
+      </div>
+      
+      <div className="mt-4 p-3 bg-furniture-tan/20 border border-furniture-brown/20 rounded text-sm">
+        <p className="font-medium mb-1">Editing Instructions:</p>
+        <ul className="list-disc pl-4 text-xs space-y-1">
+          <li>Click on an item to select it</li> 
+          <li>Use the <strong>Move/Rotate</strong> toggle to switch between movement and rotation modes</li>
+          <li>Drag the blue dots to resize the selected furniture</li>
+        </ul>
       </div>
     </div>
   );
