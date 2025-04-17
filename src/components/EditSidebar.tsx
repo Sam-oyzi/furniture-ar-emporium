@@ -1,15 +1,14 @@
 
 import { useState, useEffect } from "react";
-import { Sidebar, SidebarContent, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { PanelLeft, Edit, Loader2 } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuthForm from "./EditMenu/AuthForm";
 import CategoryManager from "./EditMenu/CategoryManager";
 import ProductForm from "./EditMenu/ProductForm";
 import { Product } from "@/types";
-import { getProducts, getProductsByCategory, createProduct, getCurrentUser } from "@/services/appwrite";
+import { getProducts, createProduct, getCurrentUser } from "@/services/appwrite";
 
 const EditSidebar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -77,72 +76,67 @@ const EditSidebar = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="flex h-screen w-full">
-        <Sidebar side="left" variant="floating" collapsible="icon">
-          <SidebarContent className="flex flex-col items-center justify-center">
-            <Button 
-              onClick={() => setIsOpen(true)}
-              variant="ghost" 
-              className="flex items-center gap-2 w-full justify-start px-2"
-            >
-              <Edit className="h-5 w-5" />
-              <span>Edit Mode</span>
-            </Button>
-          </SidebarContent>
-        </Sidebar>
-        
-        {/* Fixed position edit button for mobile */}
-        <Button 
-          onClick={() => setIsOpen(true)} 
-          className="fixed left-4 bottom-4 z-50 rounded-full w-12 h-12 p-0 md:hidden"
-        >
-          <Edit className="h-5 w-5" />
-        </Button>
-        
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>Admin Control Panel</DialogTitle>
-            </DialogHeader>
-            
-            {isLoading ? (
-              <div className="flex justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              </div>
-            ) : (
-              <>
-                {!isAuthenticated ? (
-                  <AuthForm onAuthenticated={handleAuthentication} />
-                ) : (
-                  <Tabs defaultValue="categories">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="categories">Categories</TabsTrigger>
-                      <TabsTrigger value="products">Products</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="categories" className="mt-4">
-                      <CategoryManager 
-                        categories={categories}
-                        onAddCategory={handleAddCategory}
-                        onSelectCategory={handleSelectCategory}
-                      />
-                    </TabsContent>
-                    
-                    <TabsContent value="products" className="mt-4">
-                      <ProductForm 
-                        selectedCategory={selectedCategory}
-                        onAddProduct={handleAddProduct}
-                      />
-                    </TabsContent>
-                  </Tabs>
-                )}
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
-      </div>
-    </SidebarProvider>
+    <>
+      {/* Desktop edit button */}
+      <Button 
+        onClick={() => setIsOpen(true)}
+        variant="ghost" 
+        className="fixed left-4 top-20 z-50 hidden md:flex items-center gap-2"
+      >
+        <Edit className="h-5 w-5" />
+        <span>Edit Mode</span>
+      </Button>
+      
+      {/* Mobile edit button */}
+      <Button 
+        onClick={() => setIsOpen(true)} 
+        className="fixed left-4 bottom-4 z-50 rounded-full w-12 h-12 p-0 md:hidden"
+      >
+        <Edit className="h-5 w-5" />
+      </Button>
+      
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Admin Control Panel</DialogTitle>
+          </DialogHeader>
+          
+          {isLoading ? (
+            <div className="flex justify-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <>
+              {!isAuthenticated ? (
+                <AuthForm onAuthenticated={handleAuthentication} />
+              ) : (
+                <Tabs defaultValue="categories">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="categories">Categories</TabsTrigger>
+                    <TabsTrigger value="products">Products</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="categories" className="mt-4">
+                    <CategoryManager 
+                      categories={categories}
+                      onAddCategory={handleAddCategory}
+                      onSelectCategory={handleSelectCategory}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="products" className="mt-4">
+                    <ProductForm 
+                      selectedCategory={selectedCategory}
+                      onAddProduct={handleAddProduct}
+                    />
+                  </TabsContent>
+                </Tabs>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

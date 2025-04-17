@@ -4,10 +4,10 @@ import EditSidebar from "@/components/EditSidebar";
 
 const Index = () => {
   return (
-    <>
+    <div className="relative">
       <EditSidebar />
       <HomePage />
-    </>
+    </div>
   );
 };
 
