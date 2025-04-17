@@ -1,7 +1,14 @@
+
 import HomePage from "./HomePage";
+import EditSidebar from "@/components/EditSidebar";
 
 const Index = () => {
-  return <HomePage />;
+  return (
+    <>
+      <EditSidebar />
+      <HomePage />
+    </>
+  );
 };
 
 export default Index;
