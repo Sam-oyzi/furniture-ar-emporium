@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Edit, Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuthForm from "./EditMenu/AuthForm";
 import CategoryManager from "./EditMenu/CategoryManager";
@@ -79,9 +79,12 @@ const EditSidebar = () => {
     <>
       {/* Desktop edit button */}
       <Button 
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          console.log("Edit button clicked");
+          setIsOpen(true);
+        }}
         variant="ghost" 
-        className="fixed left-4 top-20 z-50 hidden md:flex items-center gap-2"
+        className="fixed left-4 top-20 z-50 hidden md:flex items-center gap-2 hover:bg-slate-100"
       >
         <Edit className="h-5 w-5" />
         <span>Edit Mode</span>
@@ -89,16 +92,25 @@ const EditSidebar = () => {
       
       {/* Mobile edit button */}
       <Button 
-        onClick={() => setIsOpen(true)} 
+        onClick={() => {
+          console.log("Mobile edit button clicked");
+          setIsOpen(true);
+        }}
         className="fixed left-4 bottom-4 z-50 rounded-full w-12 h-12 p-0 md:hidden"
       >
         <Edit className="h-5 w-5" />
       </Button>
       
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        console.log("Dialog open state changed:", open);
+        setIsOpen(open);
+      }}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Admin Control Panel</DialogTitle>
+            <DialogDescription>
+              Manage your store's products and categories here.
+            </DialogDescription>
           </DialogHeader>
           
           {isLoading ? (
