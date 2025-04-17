@@ -1,5 +1,5 @@
 
-import { Client, Account, Databases, Storage, ID } from 'appwrite';
+import { Client, Account, Databases, Storage, ID, Query } from 'appwrite';
 import { Product } from '@/types';
 
 // Initialize Appwrite Client
@@ -102,8 +102,8 @@ export const getProductsByCategory = async (category: string) => {
       DATABASE_ID,
       PRODUCTS_COLLECTION_ID,
       [
-        // Add a query to filter by category
-        databases.queryEqual('category', category)
+        // Use Query.equal for filtering by category
+        Query.equal('category', category)
       ]
     );
     return response.documents as unknown as Product[];
@@ -130,4 +130,3 @@ export const uploadFile = async (file: File) => {
     throw error;
   }
 };
-
