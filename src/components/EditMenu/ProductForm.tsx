@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Image, Box, Upload, Save } from "lucide-react";
+import { Image, Box, Upload, Save, Loader2 } from "lucide-react";
 import { Product } from "@/types";
+import { createProduct, uploadFile } from "@/services/appwrite";
 
 interface ProductFormProps {
   selectedCategory: string;
@@ -21,8 +22,9 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
   const [imageUrl, setImageUrl] = useState("");
   const [modelUrl, setModelUrl] = useState("");
   const [features, setFeatures] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name.trim()) {
@@ -42,48 +44,69 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
       inStock: true
     };
     
-    onAddProduct(newProduct);
-    
-    // Reset form
-    setName("");
-    setPrice("");
-    setDescription("");
-    setImageUrl("");
-    setModelUrl("");
-    setFeatures("");
-    
-    toast.success(`Added new product: ${name}`);
+    setIsLoading(true);
+    try {
+      await createProduct(newProduct);
+      onAddProduct(newProduct);
+      
+      // Reset form
+      setName("");
+      setPrice("");
+      setDescription("");
+      setImageUrl("");
+      setModelUrl("");
+      setFeatures("");
+      
+      toast.success(`Added new product: ${name}`);
+    } catch (error) {
+      toast.error("Failed to save product. Please try again.");
+      console.error("Error saving product:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleImageUpload = () => {
+  const handleImageUpload = async () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
-    fileInput.onchange = (e) => {
+    fileInput.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        // In a real app, we'd upload this file to a server
-        // For now, we'll just pretend and use a fake URL
-        const fakeUploadedUrl = `https://example.com/images/${file.name}`;
-        setImageUrl(fakeUploadedUrl);
-        toast.success(`Image uploaded: ${file.name}`);
+        setIsLoading(true);
+        try {
+          const result = await uploadFile(file);
+          setImageUrl(result.url);
+          toast.success(`Image uploaded: ${file.name}`);
+        } catch (error) {
+          toast.error("Failed to upload image");
+          console.error("Error uploading image:", error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
     fileInput.click();
   };
   
-  const handleModelUpload = () => {
+  const handleModelUpload = async () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.glb,.gltf';
-    fileInput.onchange = (e) => {
+    fileInput.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        // In a real app, we'd upload this file to a server
-        // For now, we'll just pretend and use a fake URL
-        const fakeUploadedUrl = `https://example.com/models/${file.name}`;
-        setModelUrl(fakeUploadedUrl);
-        toast.success(`3D model uploaded: ${file.name}`);
+        setIsLoading(true);
+        try {
+          const result = await uploadFile(file);
+          setModelUrl(result.url);
+          toast.success(`3D model uploaded: ${file.name}`);
+        } catch (error) {
+          toast.error("Failed to upload 3D model");
+          console.error("Error uploading 3D model:", error);
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
     fileInput.click();
@@ -104,6 +127,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
           
@@ -116,6 +140,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
               placeholder="0.00"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              disabled={isLoading}
             />
           </div>
           
@@ -127,6 +152,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              disabled={isLoading}
             />
           </div>
           
@@ -138,6 +164,7 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
               value={features}
               onChange={(e) => setFeatures(e.target.value)}
               rows={3}
+              disabled={isLoading}
             />
           </div>
           
@@ -150,8 +177,9 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 className="flex-1"
+                disabled={isLoading}
               />
-              <Button type="button" variant="outline" size="icon" title="Upload Image" onClick={handleImageUpload}>
+              <Button type="button" variant="outline" size="icon" title="Upload Image" onClick={handleImageUpload} disabled={isLoading}>
                 <Image className="h-4 w-4" />
               </Button>
             </div>
@@ -166,15 +194,24 @@ const ProductForm = ({ selectedCategory, onAddProduct }: ProductFormProps) => {
                 value={modelUrl}
                 onChange={(e) => setModelUrl(e.target.value)}
                 className="flex-1"
+                disabled={isLoading}
               />
-              <Button type="button" variant="outline" size="icon" title="Upload 3D Model" onClick={handleModelUpload}>
+              <Button type="button" variant="outline" size="icon" title="Upload 3D Model" onClick={handleModelUpload} disabled={isLoading}>
                 <Box className="h-4 w-4" />
               </Button>
             </div>
           </div>
           
-          <Button type="submit" className="w-full">
-            <Save className="mr-2 h-4 w-4" /> Save Product
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" /> Save Product
+              </>
+            )}
           </Button>
         </form>
       </CardContent>

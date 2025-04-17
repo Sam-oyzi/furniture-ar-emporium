@@ -1,23 +1,60 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { Settings, Loader2 } from "lucide-react";
 import AuthForm from "./AuthForm";
 import CategoryManager from "./CategoryManager";
 import ProductForm from "./ProductForm";
 import { Product } from "@/types";
-import { getProductsByCategory, products } from "@/data/products";
+import { getProducts, getProductsByCategory, createProduct, getCurrentUser } from "@/services/appwrite";
 
 const EditMenu = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [categories, setCategories] = useState<string[]>(['living', 'dining', 'bedroom']);
   const [selectedCategory, setSelectedCategory] = useState<string>("living");
+  const [products, setProducts] = useState<Product[]>([]);
+  
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await getCurrentUser();
+      if (user) {
+        setIsAuthenticated(true);
+        loadProducts();
+      } else {
+        setIsLoading(false);
+      }
+    };
+    
+    if (isOpen) {
+      checkUser();
+    }
+  }, [isOpen]);
+  
+  const loadProducts = async () => {
+    setIsLoading(true);
+    try {
+      const allProducts = await getProducts();
+      setProducts(allProducts);
+      
+      // Extract unique categories from products
+      const productCategories = [...new Set(allProducts.map(p => p.category))];
+      if (productCategories.length > 0) {
+        setCategories([...new Set([...categories, ...productCategories])]);
+      }
+    } catch (error) {
+      console.error("Error loading products:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   const handleAuthentication = () => {
     setIsAuthenticated(true);
+    loadProducts();
   };
   
   const handleAddCategory = (category: string) => {
@@ -29,20 +66,13 @@ const EditMenu = () => {
     setSelectedCategory(category);
   };
   
-  const handleAddProduct = (product: Omit<Product, "id">) => {
-    // In a real application, this would update the database
-    // For now, we'll just log it to the console
-    console.log("Adding new product:", product);
-    
-    // Here we would normally update our data store
-    // Since we can't modify the products.ts file directly, we'll just simulate it
-    const newProduct = {
-      ...product,
-      id: `${product.category}-${Date.now()}`,
-    };
-    
-    // In a real app, this would be persisted
-    console.log("New product added:", newProduct);
+  const handleAddProduct = async (product: Omit<Product, "id">) => {
+    try {
+      await createProduct(product);
+      loadProducts(); // Reload products after adding a new one
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
   };
 
   return (
@@ -57,30 +87,38 @@ const EditMenu = () => {
           <DialogTitle>Admin Control Panel</DialogTitle>
         </DialogHeader>
         
-        {!isAuthenticated ? (
-          <AuthForm onAuthenticated={handleAuthentication} />
+        {isLoading ? (
+          <div className="flex justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
         ) : (
-          <Tabs defaultValue="categories">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="categories">Categories</TabsTrigger>
-              <TabsTrigger value="products">Products</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="categories" className="mt-4">
-              <CategoryManager 
-                categories={categories}
-                onAddCategory={handleAddCategory}
-                onSelectCategory={handleSelectCategory}
-              />
-            </TabsContent>
-            
-            <TabsContent value="products" className="mt-4">
-              <ProductForm 
-                selectedCategory={selectedCategory}
-                onAddProduct={handleAddProduct}
-              />
-            </TabsContent>
-          </Tabs>
+          <>
+            {!isAuthenticated ? (
+              <AuthForm onAuthenticated={handleAuthentication} />
+            ) : (
+              <Tabs defaultValue="categories">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="categories">Categories</TabsTrigger>
+                  <TabsTrigger value="products">Products</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="categories" className="mt-4">
+                  <CategoryManager 
+                    categories={categories}
+                    onAddCategory={handleAddCategory}
+                    onSelectCategory={handleSelectCategory}
+                  />
+                </TabsContent>
+                
+                <TabsContent value="products" className="mt-4">
+                  <ProductForm 
+                    selectedCategory={selectedCategory}
+                    onAddProduct={handleAddProduct}
+                  />
+                </TabsContent>
+              </Tabs>
+            )}
+          </>
         )}
       </DialogContent>
     </Dialog>
